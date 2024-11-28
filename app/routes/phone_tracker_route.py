@@ -2,9 +2,9 @@ from flask import Blueprint, request, jsonify
 
 from app.repository.insert_repository import insert_data
 
-phone_blueprint = Blueprint('phones', __name__)
+phone_tracker_blueprint = Blueprint('phones', __name__)
 
-@phone_blueprint.route("/", methods=['POST'])
+@phone_tracker_blueprint.route("", methods=['POST'])
 def get_interactions():
    try:
       data = request.json

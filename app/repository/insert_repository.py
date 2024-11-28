@@ -3,7 +3,7 @@ from typing import List, Dict, Optional
 from app.db.database import driver
 from app.db.models import Device
 from app.db.models.interaction import Interaction
-from app.repository.queries import insert_device_query, create_interaction_relation_query
+from app.db.queries import insert_device_query, create_interaction_relation_query
 from app.utils.data_handler import convert_to_device, convert_to_interaction
 
 
