@@ -29,22 +29,27 @@ def get_devices_with_longest_path():
 def get_devices_with_strong_connection():
     with driver.session() as session:
         query = '''
-        MATCH (d:Device)-[re:CONNECTED]->(d2:Device)
-        WHERE re.signal_strength_dbm > -60
-        RETURN d AS device, d2 AS connected_device, re.signal_strength_dbm AS signal_strength;
+        MATCH (start:Device)
+        MATCH (end:Device)
+        WHERE start <> end
+        MATCH path = shortestPath((start)-[:CONNECTED*]->(end))
+        WHERE ALL(r IN relationships(path) WHERE r.signal_strength_dbm > -60)
+        WITH path, length(path) AS pathLength
+        ORDER BY pathLength DESC
+        LIMIT 1
+        RETURN path, pathLength;
         '''
         res = session.run(query).data()
-        return [
-            {
-                "device": dict(record["device"]),
-                "connected_device": dict(record["connected_device"]),
-                "signal_strength": record["signal_strength"]
-            }
-            for record in res
-        ]
+        return (
+            Maybe.from_optional(res)
+            .map(lambda record: {
+                "path_length": record[0]['pathLength'],
+                "nodes": record[0]['path']
+            })
+        )
 
 
-def get_count_devices_connected_by_device_id(device_id: str):
+def get_count_devices_connected_by_device(device_id: str):
     with driver.session() as session:
         query = '''
         MATCH (d:Device) -[:CONNECTED]-> (d2:Device)
