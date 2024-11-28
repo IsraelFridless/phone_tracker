@@ -4,8 +4,8 @@ from app.repository.insert_repository import insert_data
 
 phone_blueprint = Blueprint('phones', __name__)
 
-@phone_blueprint.route("/api/phone_tracker", methods=['POST'])
-def get_interaction():
+@phone_blueprint.route("/", methods=['POST'])
+def get_interactions():
    try:
       data = request.json
       res = insert_data(data)

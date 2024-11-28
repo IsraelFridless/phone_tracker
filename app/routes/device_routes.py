@@ -27,7 +27,6 @@ def get_devices_with_strong_connection_route():
 @device_blueprint.route("/count_device_connected/<string:device_id>", methods=['GET'])
 def get_count_devices_connected_by_device_id_route(device_id: str):
    try:
-
        count_devices_connected = get_count_devices_connected_by_device_id(device_id)
        return jsonify(count_devices_connected.value_or({})), 200
    except Exception as e:
