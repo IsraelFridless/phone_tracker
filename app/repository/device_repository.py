@@ -39,3 +39,17 @@ def get_devices_with_strong_connection():
             }
             for record in res
         ]
+
+
+def get_count_devices_connected_by_device_id(device_id: str):
+    with driver.session() as session:
+        query = '''
+        MATCH (d:Device) -[:CONNECTED]-> (d2:Device)
+        WHERE d.id = $device_id
+        RETURN COUNT(d) AS devices_count
+        '''
+        res = session.run(query, {'device_id': device_id}).single()
+        return (
+            Maybe.from_optional(res)
+            .map(lambda d: dict(d))
+        )
