@@ -21,3 +21,21 @@ def get_devices_with_longest_path():
                 "end_device": dict(record["end_device"])
             })
         )
+
+
+def get_devices_with_strong_connection():
+    with driver.session() as session:
+        query = '''
+        MATCH (d:Device)-[re:CONNECTED]->(d2:Device)
+        WHERE re.signal_strength_dbm > -60
+        RETURN d AS device, d2 AS connected_device, re.signal_strength_dbm AS signal_strength;
+        '''
+        res = session.run(query).data()
+        return [
+            {
+                "device": dict(record["device"]),
+                "connected_device": dict(record["connected_device"]),
+                "signal_strength": record["signal_strength"]
+            }
+            for record in res
+        ]
